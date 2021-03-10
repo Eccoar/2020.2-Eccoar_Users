@@ -1,6 +1,14 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {User} from "./entity/User";
+import * as express from 'express';
+
+const app = express()
+const port = process.env.APP_PORT || 5000
+
+app.listen(port, () => {
+    console.log('Its alive!')
+})
 
 createConnection().then(async connection => {
 
