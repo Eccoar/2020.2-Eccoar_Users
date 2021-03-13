@@ -3,9 +3,9 @@ import { User } from "../entity/User";
 
 export class UserRepository {
 
-    findByName(firstName: string, lastName: string) {
+    findByName(name: string, surname: string) {
         const repository = getRepository(User);
-        return repository.findOne({ firstName, lastName });
+        return repository.findOne({ name, surname });
     }
 
 }

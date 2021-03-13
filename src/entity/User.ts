@@ -1,18 +1,30 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { IsEmail } from 'class-validator';
+import { Localization } from "./Localization";
 
-@Entity()
+
+@Entity("tb_users")
 export class User {
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    firstName: string;
+    @Column({length: 255, nullable: false})
+    name: string;
 
-    @Column()
-    lastName: string;
+    @Column({length: 255, nullable: false})
+    surname: string;
 
-    @Column()
-    age: number;
+    @Column({type: "date"})
+    birth: string;
 
+    @Column({length: 11, nullable: false, unique: true})
+    cpf: string;
+
+    @Column({nullable: false, unique: true})
+    @IsEmail()
+    email: string;
+
+    @ManyToMany(() => Localization, localizations => localizations.users)
+    localizations: Localization[];
 }
