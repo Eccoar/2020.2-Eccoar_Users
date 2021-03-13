@@ -1,14 +1,18 @@
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import {User} from "./entity/User";
+import { createConnection } from "typeorm";
+import { User } from "./entity/User";
 import * as express from 'express';
+import routers from './routes';
 
-const app = express()
-const port = process.env.APP_PORT || 5000
+const app = express();
+const PORT = process.env.APP_PORT || 5000;
 
-app.listen(port, () => {
-    console.log('Its alive!')
-})
+
+app.use(express.json());
+app.use(routers);
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`)
+});
 
 createConnection().then(async connection => {
 
