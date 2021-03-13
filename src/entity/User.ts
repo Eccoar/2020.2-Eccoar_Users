@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import { 
+    Entity, 
+    PrimaryGeneratedColumn, 
+    Column, 
+    ManyToMany,
+    JoinTable } from "typeorm";
 import { IsEmail } from 'class-validator';
 import { Localization } from "./Localization";
 
@@ -26,5 +31,6 @@ export class User {
     email: string;
 
     @ManyToMany(() => Localization, localizations => localizations.users)
+    @JoinTable()
     localizations: Localization[];
 }

@@ -4,7 +4,10 @@
    "description": "Awesome project developed with TypeORM.",
    "devDependencies": {
       "@types/express": "^4.17.11",
+      "@types/jest": "^26.0.20",
       "@types/node": "^8.0.29",
+      "jest": "^26.6.3",
+      "ts-jest": "^26.5.3",
       "ts-node-dev": "^1.1.6",
       "typescript": "3.3.3333"
    },
@@ -16,6 +19,8 @@
       "typeorm": "0.2.31"
    },
    "scripts": {
-      "start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts"
+      "start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts",
+      "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+      "test": "jest"
    }
 }
