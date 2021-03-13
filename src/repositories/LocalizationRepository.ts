@@ -3,7 +3,7 @@ import { Localization } from "../entity/Localization";
 
 export class LocalizationRepository {
 
-    save(localization: Localization) {
+    save(localization: Localization): void {
         const repository = getRepository(Localization);
         repository.save(localization);
     }

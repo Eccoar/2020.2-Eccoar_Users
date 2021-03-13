@@ -3,7 +3,8 @@ import {
     PrimaryGeneratedColumn, 
     Column, 
     ManyToMany,
-    JoinTable } from "typeorm";
+    JoinTable 
+} from "typeorm";
 import { IsEmail } from 'class-validator';
 import { Localization } from "./Localization";
 
