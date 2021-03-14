@@ -12,4 +12,4 @@ ADD . .
 
 CMD ["npm", "start"]
 
-EXPOSE 5000
+EXPOSE 5002

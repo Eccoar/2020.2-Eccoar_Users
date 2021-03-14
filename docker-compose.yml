@@ -18,7 +18,7 @@ services:
       - ./src:/app/src
       - ./package.json:/app/package.json
     ports:
-      - 5000:5000
+      - 5002:5000
     environment:
       APP_PORT: 5000
       TYPEORM_CONNECTION: mysql

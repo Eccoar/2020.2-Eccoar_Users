@@ -5,7 +5,7 @@ import routers from './routes';
 import { initializeDB } from "./db";
 
 const app = express();
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 5002;
 
 initializeDB();
 
