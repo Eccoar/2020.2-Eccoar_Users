@@ -1,6 +1,5 @@
-import { createConnection } from "typeorm";
+import { createConnection } from 'typeorm';
 
-
-export async function  initializeDB(): Promise<void> {
-    await createConnection();
+export async function initializeDB(): Promise<void> {
+	await createConnection();
 }
