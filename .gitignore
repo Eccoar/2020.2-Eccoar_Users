@@ -4,3 +4,7 @@ node_modules/
 build/
 tmp/
 temp/
+
+coverage/
+test-report.json
+test-report.xml
