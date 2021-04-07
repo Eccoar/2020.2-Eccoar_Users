@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserRepository } from './../repositories/UserRepository';
+import { UserRepository } from '@repositories/UserRepository';
 
 export default class ControllerUser {
 	userRepository: UserRepository;

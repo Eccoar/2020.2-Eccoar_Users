@@ -1,4 +1,4 @@
-import ControllerUser from '../src/controllers/ControllerUser';
+import ControllerUser from '@controllers/ControllerUser';
 import { Request, Response } from 'express';
 
 const mockResponse = () => {

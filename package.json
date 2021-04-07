@@ -17,6 +17,7 @@
 		"prettier": "^2.2.1",
 		"ts-jest": "^26.5.3",
 		"ts-node-dev": "^1.1.6",
+		"tsconfig-paths": "^3.9.0",
 		"typescript": "^4.2.3"
 	},
 	"dependencies": {
@@ -28,7 +29,7 @@
 		"typeorm": "0.2.31"
 	},
 	"scripts": {
-		"start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts",
+		"start": "tsnd -r tsconfig-paths/register --transpile-only --respawn --ignore-watch node_modules src/server.ts",
 		"build": "node ./build/server.js --env=production",
 		"typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
 		"test": "jest",

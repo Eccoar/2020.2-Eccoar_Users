@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { User } from '../entity/User';
+import { User } from '@entity/User';
 
 export class UserRepository {
 	findByName(name: string, surname: string): Promise<User> {
