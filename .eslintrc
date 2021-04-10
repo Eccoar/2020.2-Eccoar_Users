@@ -16,7 +16,7 @@
 	"ignorePatterns": ["db/**/*", "jest.config.js"],
 	"rules": {
 		"strict": ["error", "never"],
-		"@typescript-eslint/explicit-module-boundary-types": 0,
+		"@typescript-eslint/explicit-module-boundary-types": "error",
 		"semi": "off",
 		"@typescript-eslint/semi": ["error"]
 	}
