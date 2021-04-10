@@ -8,3 +8,5 @@ temp/
 coverage/
 test-report.json
 test-report.xml
+lint-report.html
+.eslintcache
