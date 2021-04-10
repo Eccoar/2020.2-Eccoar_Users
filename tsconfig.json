@@ -1,23 +1,24 @@
 {
-   "compilerOptions": {
-      "lib": [
-         "es5",
-         "es6"
-      ],
-      "target": "es5",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./build",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "baseUrl": ".",
-      "sourceMap": true,
-      "noImplicitAny": true,
-   },
-   "include":[
-      "src/**/*.ts"
-   ],
-   "exclude":[
-      "node_modules"
-   ],
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"noImplicitAny": true,
+		"outDir": "build",
+		"types": ["jest"],
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@controllers/*": ["./src/controllers/*"],
+			"@entity/*": ["./src/entity/*"],
+			"@repositories/*": ["./src/repositories/*"],
+			"@services/*": ["./src/services/*"],
+			"@utils/*": ["./src/utils/*"]
+		}
+	},
+	"include": ["src", "test"],
+	"exclude": ["node_modules", "build"]
 }
