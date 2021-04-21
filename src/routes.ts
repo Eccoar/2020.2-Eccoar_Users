@@ -9,8 +9,4 @@ routers.get('/api/ping', (req: Request, resp: Response) => {
 	controller.pong(req, resp);
 });
 
-routers.get('/api/user', (req: Request, resp: Response) => {
-	controller.findUserByName(req, resp);
-});
-
 export default routers;
