@@ -9,4 +9,8 @@ routers.get('/api/ping', (req: Request, resp: Response) => {
 	controller.pong(req, resp);
 });
 
+routers.post('/api/users', async (req: Request, res: Response) => {
+	controller.createUser(req, res);
+});
+
 export default routers;
