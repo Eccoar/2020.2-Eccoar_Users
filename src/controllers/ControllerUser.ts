@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import UserService from '@services/UserService';
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
 import { CheckFields } from '@utils/CheckFields';
+import { BadRequest } from '@utils/ErrorHandler';
 
 export default class ControllerUser {
 	userService: UserService;
@@ -19,7 +20,11 @@ export default class ControllerUser {
 		resp.status(200).json(pingPong);
 	}
 
-	async createUser(req: Request, res: Response): Promise<Response | void> {
+	async createUser(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response | void> {
 		try {
 			const fields = [
 				'email',
@@ -34,9 +39,8 @@ export default class ControllerUser {
 			const missingFields = CheckFields(fields, req.body);
 
 			if (missingFields.length > 0) {
-				return res
-					.status(400)
-					.json({ msg: `Missing fields [${missingFields}]` });
+				const errorMessage = `Missing fields [${missingFields}]`;
+				throw new BadRequest(errorMessage);
 			}
 
 			const userAuth = {
@@ -61,7 +65,7 @@ export default class ControllerUser {
 			const resp = await this.userService.createUser(user);
 			return res.status(201).json(resp);
 		} catch (error) {
-			return res.status(400).json({ err: error.message });
+			next(error);
 		}
 	}
 }
