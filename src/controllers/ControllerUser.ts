@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import UserService from '@services/UserService';
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
+import { CheckFields } from '@utils/CheckFields';
 
 export default class ControllerUser {
 	userService: UserService;
@@ -20,6 +21,24 @@ export default class ControllerUser {
 
 	async createUser(req: Request, res: Response): Promise<Response | void> {
 		try {
+			const fields = [
+				'email',
+				'name',
+				'lastName',
+				'password',
+				'cpf',
+				'cep',
+				'adress',
+			];
+
+			const missingFields = CheckFields(fields, req.body);
+
+			if (missingFields.length > 0) {
+				return res
+					.status(400)
+					.json({ msg: `Missing fields [${missingFields}]` });
+			}
+
 			const userAuth = {
 				email: req.body.email,
 				password: req.body.password,
