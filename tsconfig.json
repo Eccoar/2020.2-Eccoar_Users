@@ -20,6 +20,6 @@
 			"@utils/*": ["./src/utils/*"]
 		}
 	},
-	"include": ["src", "test", "serviceAccount.ts"],
+	"include": ["src", "test"],
 	"exclude": ["node_modules", "build"]
 }

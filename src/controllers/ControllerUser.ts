@@ -35,7 +35,6 @@ export default class ControllerUser {
 				'cep',
 				'adress',
 			];
-
 			const missingFields = CheckFields(fields, req.body);
 
 			if (missingFields.length > 0) {
@@ -62,8 +61,9 @@ export default class ControllerUser {
 				adress: req.body.adress,
 			} as User;
 
-			const resp = await this.userService.createUser(user);
-			return res.status(201).json(resp);
+			await this.userService.createUser(user);
+
+			return res.status(201);
 		} catch (error) {
 			next(error);
 		}

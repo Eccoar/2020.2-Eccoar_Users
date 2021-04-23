@@ -12,7 +12,7 @@ export default class UserService {
 			});
 			return userRecord.uid;
 		} catch (error) {
-			throw new Error(error);
+			throw new Error(error.message);
 		}
 	}
 
@@ -21,7 +21,7 @@ export default class UserService {
 			const resp = await admin.firestore().collection('users').add(user);
 			return resp.id;
 		} catch (error) {
-			throw new Error(error);
+			throw new Error(error.message);
 		}
 	}
 }
