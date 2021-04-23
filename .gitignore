@@ -10,3 +10,5 @@ test-report.json
 test-report.xml
 lint-report.html
 .eslintcache
+
+service-account.json

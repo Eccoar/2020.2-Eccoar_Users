@@ -11,10 +11,11 @@
 		"types": ["jest"],
 		"skipLibCheck": true,
 		"baseUrl": ".",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
 		"paths": {
 			"@controllers/*": ["./src/controllers/*"],
-			"@entity/*": ["./src/entity/*"],
-			"@repositories/*": ["./src/repositories/*"],
+			"@schemas/*": ["./src/schemas/*"],
 			"@services/*": ["./src/services/*"],
 			"@utils/*": ["./src/utils/*"]
 		}

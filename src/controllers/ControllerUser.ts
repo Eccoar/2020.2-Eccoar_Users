@@ -1,11 +1,16 @@
-import { Request, Response } from 'express';
-import { UserRepository } from '@repositories/UserRepository';
+import { NextFunction, Request, Response } from 'express';
+
+import UserService from '@services/UserService';
+import { User } from '@schemas/User';
+import { UserAuth } from '@schemas/UserAuth';
+import { CheckFields } from '@utils/CheckFields';
+import { BadRequest } from '@utils/ErrorHandler';
 
 export default class ControllerUser {
-	userRepository: UserRepository;
+	userService: UserService;
 
 	constructor() {
-		this.userRepository = new UserRepository();
+		this.userService = new UserService();
 	}
 
 	async pong(req: Request, resp: Response): Promise<void> {
@@ -15,14 +20,51 @@ export default class ControllerUser {
 		resp.status(200).json(pingPong);
 	}
 
-	async findUserByName(req: Request, resp: Response): Promise<void> {
-		const name = req.query.name.toString();
-		const surname = req.query.surname.toString();
+	async createUser(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response | void> {
 		try {
-			const user = await this.userRepository.findByName(name, surname);
-			resp.status(200).json(user);
-		} catch (e) {
-			new Error('Request Error');
+			const fields = [
+				'email',
+				'name',
+				'lastName',
+				'password',
+				'cpf',
+				'cep',
+				'adress',
+			];
+			const missingFields = CheckFields(fields, req.body);
+
+			if (missingFields.length > 0) {
+				const errorMessage = `Missing fields [${missingFields}]`;
+				throw new BadRequest(errorMessage);
+			}
+
+			const userAuth = {
+				email: req.body.email,
+				password: req.body.password,
+				name: req.body.name,
+				lastName: req.body.lastName,
+			} as UserAuth;
+
+			const uuidAuth = await this.userService.createUserAuth(userAuth);
+
+			const user = {
+				userAuthId: uuidAuth,
+				email: req.body.email,
+				lastName: req.body.lastName,
+				name: req.body.name,
+				cpf: req.body.cpf,
+				cep: req.body.cep,
+				adress: req.body.adress,
+			} as User;
+
+			await this.userService.createUser(user);
+			return res.sendStatus(201);
+		} catch (error) {
+			next(error);
 		}
 	}
 }
