@@ -62,8 +62,7 @@ export default class ControllerUser {
 			} as User;
 
 			await this.userService.createUser(user);
-
-			return res.status(201);
+			return res.sendStatus(201);
 		} catch (error) {
 			next(error);
 		}

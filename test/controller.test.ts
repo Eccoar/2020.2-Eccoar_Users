@@ -5,6 +5,7 @@ jest.mock('@services/UserService');
 
 const mockResponse = () => {
 	const res: Response = {} as Response;
+	res.sendStatus = jest.fn().mockReturnValue(res);
 	res.status = jest.fn().mockReturnValue(res);
 	res.json = jest.fn().mockReturnValue(res);
 	return res;
@@ -44,7 +45,7 @@ describe('Create User Route', () => {
 		);
 		const mNext = jest.fn();
 		await controller.createUser(mReq, mResp, mNext);
-		expect(mResp.status).toHaveBeenCalledWith(201);
+		expect(mResp.sendStatus).toHaveBeenCalledWith(201);
 	});
 
 	test('should return statuscode 400', async () => {
