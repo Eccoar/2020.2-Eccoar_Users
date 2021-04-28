@@ -92,9 +92,7 @@ export default class ControllerUser {
 		next: NextFunction,
 	): Promise<Response> {
 		try {
-			const userId = await this.userService.authorization(
-				req.headers.authorization,
-			);
+			const userId = await this.userService.authorization(req.body.token);
 
 			return res.status(200).json(userId);
 		} catch (error) {

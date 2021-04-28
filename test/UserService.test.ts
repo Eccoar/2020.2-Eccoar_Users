@@ -1,6 +1,7 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
 import UserService from '@services/UserService';
+import { NotFound } from '@utils/ErrorHandler';
 import * as admin from 'firebase-admin';
 
 jest.mock('firebase-admin');
@@ -116,5 +117,49 @@ describe('Test User Service', () => {
 		} as unknown) as any);
 
 		expect(userService.createUser(user)).rejects.toThrow();
+	});
+
+	test('should return User id getting by email', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const getUserByEmail = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			getUserByEmail,
+		} as unknown) as any);
+
+		const id = await userService.getUserAuthInstanceByEmail(
+			'generic@generic.com',
+		);
+		expect(id).toBe('b1ceeda8');
+	});
+
+	test('should return Error getting id by email', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+		const getUserByEmail = jest.fn().mockImplementation(() => {
+			throw new NotFound('');
+		});
+
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			getUserByEmail,
+		} as unknown) as any);
+
+		expect(
+			userService.getUserAuthInstanceByEmail('generic@generic.com'),
+		).rejects.toThrow();
+	});
+
+	test('should return userId after authorization', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const verifyIdToken = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			verifyIdToken,
+		} as unknown) as any);
+
+		const id = await userService.authorization('jwt Token');
+		expect(id).toBe('b1ceeda8');
 	});
 });
