@@ -12,3 +12,4 @@ lint-report.html
 .eslintcache
 
 service-account.json
+firebase-account.json

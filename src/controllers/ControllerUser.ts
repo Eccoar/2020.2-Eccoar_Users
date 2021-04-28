@@ -67,4 +67,22 @@ export default class ControllerUser {
 			next(error);
 		}
 	}
+
+	async signin(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response> {
+		try {
+			const { email, password } = req.body;
+
+			const id = await this.userService.getUserAuthInstanceByEmail(email);
+
+			const jwt = await this.userService.signIn(email, password);
+
+			return res.status(200).json({ token: jwt, userId: id });
+		} catch (error) {
+			next(error);
+		}
+	}
 }

@@ -16,4 +16,11 @@ routers.post(
 	},
 );
 
+routers.post(
+	'/api/signin',
+	async (req: Request, res: Response, next: NextFunction) => {
+		controller.signin(req, res, next);
+	},
+);
+
 export default routers;

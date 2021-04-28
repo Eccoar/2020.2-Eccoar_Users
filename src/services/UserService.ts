@@ -1,6 +1,7 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
-import admin from '../firebaseDB';
+import { BadRequest, NotFound } from '@utils/ErrorHandler';
+import { admin, firebase } from '../firebaseDB';
 
 export default class UserService {
 	async createUserAuth(userAuth: UserAuth): Promise<string> {
@@ -22,6 +23,30 @@ export default class UserService {
 			return resp.id;
 		} catch (error) {
 			throw new Error(error.message);
+		}
+	}
+
+	async getUserAuthInstanceByEmail(email: string): Promise<string> {
+		try {
+			const userRecord = await admin.auth().getUserByEmail(email);
+			return userRecord.uid;
+		} catch (error) {
+			throw new NotFound('User not found');
+		}
+	}
+
+	async signIn(email: string, password: string): Promise<string> {
+		try {
+			const { user } = await firebase
+				.auth()
+				.signInWithEmailAndPassword(email, password);
+			if (!user.emailVerified) {
+				user.sendEmailVerification();
+				throw new Error('User not verified');
+			}
+			return await user.getIdToken(true);
+		} catch (error) {
+			throw new BadRequest(error);
 		}
 	}
 }

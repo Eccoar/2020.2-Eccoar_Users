@@ -26,7 +26,7 @@ const handleErrors = (
 	resp: Response,
 	_next: NextFunction,
 ): Response => {
-	if (err instanceof BadRequest) {
+	if (err instanceof GeneralError) {
 		return resp.status(err.getCode()).json({
 			status: 'error',
 			message: err.message,
