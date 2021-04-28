@@ -1,6 +1,6 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
-import { BadRequest, NotFound } from '@utils/ErrorHandler';
+import { BadRequest, NotFound, Unauthorized } from '@utils/ErrorHandler';
 import { admin, firebase } from '../firebaseDB';
 
 export default class UserService {
@@ -47,6 +47,15 @@ export default class UserService {
 			return await user.getIdToken(true);
 		} catch (error) {
 			throw new BadRequest(error);
+		}
+	}
+
+	async authorization(jwt: string): Promise<string> {
+		try {
+			const user = await admin.auth().verifyIdToken(jwt);
+			return user.uid;
+		} catch (error) {
+			throw new Unauthorized('Access denied');
 		}
 	}
 }

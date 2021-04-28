@@ -23,4 +23,11 @@ routers.post(
 	},
 );
 
+routers.post(
+	'/api/authorization',
+	async (req: Request, res: Response, next: NextFunction) => {
+		controller.authorizationHandler(req, res, next);
+	},
+);
+
 export default routers;

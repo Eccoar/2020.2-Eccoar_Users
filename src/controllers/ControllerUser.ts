@@ -85,4 +85,20 @@ export default class ControllerUser {
 			next(error);
 		}
 	}
+
+	async authorizationHandler(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response> {
+		try {
+			const userId = await this.userService.authorization(
+				req.headers.authorization,
+			);
+
+			return res.status(200).json(userId);
+		} catch (error) {
+			next(error);
+		}
+	}
 }
