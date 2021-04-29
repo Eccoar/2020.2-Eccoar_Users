@@ -1,10 +1,12 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
 import UserService from '@services/UserService';
-import { NotFound } from '@utils/ErrorHandler';
+import { NotFound, Unauthorized } from '@utils/ErrorHandler';
 import * as admin from 'firebase-admin';
+import firebase from 'firebase';
 
 jest.mock('firebase-admin');
+jest.mock('firebase');
 
 describe('Test User Service', () => {
 	const mockFirestoreProperty = (admin: any) => {
@@ -161,5 +163,20 @@ describe('Test User Service', () => {
 
 		const id = await userService.authorization('jwt Token');
 		expect(id).toBe('b1ceeda8');
+	});
+
+	test('should return Error after authorization', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const verifyIdToken = jest.fn().mockImplementation(() => {
+			throw new Unauthorized('');
+		});
+
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			verifyIdToken,
+		} as unknown) as any);
+
+		expect(userService.authorization('jwt Token')).rejects.toThrow();
 	});
 });
