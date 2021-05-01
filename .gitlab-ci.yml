@@ -38,6 +38,8 @@ unit_test:
   stage: tests
   before_script:
     - npm install
+    - cp $FIREBASE_SERVICE service-account.json
+    - cp $FIREBASE_CLIENT firebase-account.json
   script:
     - npm run test
   artifacts:
