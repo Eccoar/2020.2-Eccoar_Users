@@ -46,6 +46,9 @@ export default class UserService {
 			}
 			return await user.getIdToken(true);
 		} catch (error) {
+			if (error.message == 'User not verified')
+				throw new Unauthorized(error.message);
+
 			throw new BadRequest(error);
 		}
 	}
