@@ -89,6 +89,7 @@ describe('Test User Service', () => {
 		const createUser = jest.fn().mockImplementation(() => {
 			throw new Error();
 		});
+
 		jest.spyOn(admin, 'auth').mockReturnValue(({
 			createUser,
 		} as unknown) as any);
@@ -139,8 +140,9 @@ describe('Test User Service', () => {
 	test('should return Error getting id by email', async () => {
 		mockAuthProperty(admin);
 		const userService = new UserService();
-		const getUserByEmail = jest.fn().mockImplementation(() => {
-			throw new NotFound('');
+
+		const getUserByEmail = jest.fn().mockImplementation(async () => {
+			throw new Error();
 		});
 
 		jest.spyOn(admin, 'auth').mockReturnValue(({
@@ -148,8 +150,10 @@ describe('Test User Service', () => {
 		} as unknown) as any);
 
 		expect(
-			userService.getUserAuthInstanceByEmail('generic@generic.com'),
-		).rejects.toThrow();
+			userService
+				.getUserAuthInstanceByEmail('generic@generic.com')
+				.catch(Error),
+		).resolves.toThrow();
 	});
 
 	test('should return userId after authorization', async () => {
@@ -169,14 +173,16 @@ describe('Test User Service', () => {
 		mockAuthProperty(admin);
 		const userService = new UserService();
 
-		const verifyIdToken = jest.fn().mockImplementation(() => {
-			throw new Unauthorized('');
-		});
+		const verifyIdToken = jest
+			.fn()
+			.mockImplementation(async () => Promise.reject());
 
 		jest.spyOn(admin, 'auth').mockReturnValue(({
 			verifyIdToken,
 		} as unknown) as any);
 
-		expect(userService.authorization('jwt Token')).rejects.toThrow();
+		expect(
+			userService.authorization('jwt Token').catch(Error),
+		).resolves.toThrow();
 	});
 });
