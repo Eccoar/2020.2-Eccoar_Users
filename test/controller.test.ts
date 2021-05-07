@@ -41,9 +41,7 @@ describe('Create User Route', () => {
 			UserService.prototype,
 			'createUserAuth',
 		).mockImplementation(() => Promise.resolve('mockUId'));
-		jest.spyOn(UserService.prototype, 'createUser').mockImplementation(() =>
-			Promise.resolve('mockId'),
-		);
+		jest.spyOn(UserService.prototype, 'createUser').mockImplementation();
 		const mNext = jest.fn();
 		await controller.createUser(mReq, mResp, mNext);
 		expect(mResp.sendStatus).toHaveBeenCalledWith(201);
@@ -86,7 +84,6 @@ describe('Sign in Route', () => {
 		expect(mResp.status).toBeCalledWith(200);
 		expect(mResp.json).toHaveBeenCalledWith({
 			token: 'mockJwt',
-			userId: 'mockUId',
 		});
 	});
 

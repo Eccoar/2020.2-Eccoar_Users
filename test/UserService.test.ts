@@ -29,7 +29,6 @@ describe('Test User Service', () => {
 
 		const user = {
 			email: 'generic@generic.com.br',
-			userAuthId: '123-456-78945-68',
 			lastName: 'generic',
 			name: 'Generic',
 			cpf: '88888888888',
@@ -37,14 +36,16 @@ describe('Test User Service', () => {
 			adress: 'generic adress',
 		} as User;
 
-		const add = jest.fn().mockReturnValue({ id: 'b1ceeda8' });
-		const collection = jest.fn(() => ({ add }));
+		const set = jest.fn();
+		const doc = jest.fn(() => ({ set }));
+		const collection = jest.fn(() => ({ doc }));
 		jest.spyOn(admin, 'firestore').mockReturnValue(({
 			collection,
 		} as unknown) as any);
 
-		const id = await userService.createUser(user);
-		expect(id).toBe('b1ceeda8');
+		await userService.createUser(user, 'b1ceeda8');
+
+		expect(userService.createUser).toBeTruthy();
 	});
 
 	test('should return a user Id for createUserAuth', async () => {
@@ -109,15 +110,16 @@ describe('Test User Service', () => {
 			adress: 'generic adress',
 		} as User;
 
-		const add = jest.fn().mockImplementation(() => {
+		const set = jest.fn().mockImplementation(() => {
 			throw new Error();
 		});
-		const collection = jest.fn(() => ({ add }));
+		const doc = jest.fn(() => ({ set }));
+		const collection = jest.fn(() => ({ doc }));
 		jest.spyOn(admin, 'firestore').mockReturnValue(({
 			collection,
 		} as unknown) as any);
 
-		expect(userService.createUser(user)).rejects.toThrow();
+		expect(userService.createUser(user, null)).rejects.toThrow();
 	});
 
 	test('should return User id getting by email', async () => {

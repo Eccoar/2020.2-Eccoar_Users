@@ -52,7 +52,6 @@ export default class ControllerUser {
 			const uuidAuth = await this.userService.createUserAuth(userAuth);
 
 			const user = {
-				userAuthId: uuidAuth,
 				email: req.body.email,
 				lastName: req.body.lastName,
 				name: req.body.name,
@@ -61,7 +60,17 @@ export default class ControllerUser {
 				adress: req.body.adress,
 			} as User;
 
-			await this.userService.createUser(user);
+			const resolvePromise = [];
+
+			const createUser = this.userService.createUser(user, uuidAuth);
+			const sendMail = this.userService.signInAfterCreate(
+				req.body.email,
+				req.body.password,
+			);
+			resolvePromise.push(createUser, sendMail);
+
+			Promise.all(resolvePromise);
+
 			return res.sendStatus(201);
 		} catch (error) {
 			next(error);
@@ -76,11 +85,11 @@ export default class ControllerUser {
 		try {
 			const { email, password } = req.body;
 
-			const id = await this.userService.getUserAuthInstanceByEmail(email);
+			await this.userService.getUserAuthInstanceByEmail(email);
 
 			const jwt = await this.userService.signIn(email, password);
 
-			return res.status(200).json({ token: jwt, userId: id });
+			return res.status(200).json({ token: jwt });
 		} catch (error) {
 			next(error);
 		}

@@ -22,10 +22,9 @@ export default class UserService {
 		}
 	}
 
-	async createUser(user: User): Promise<string> {
+	async createUser(user: User, userId: string): Promise<void> {
 		try {
-			const resp = await admin.firestore().collection('users').add(user);
-			return resp.id;
+			await admin.firestore().collection('users').doc(userId).set(user);
 		} catch (error) {
 			throw new Error(error.message);
 		}
@@ -37,6 +36,17 @@ export default class UserService {
 			return userRecord.uid;
 		} catch (error) {
 			throw new NotFound('User not found');
+		}
+	}
+
+	async signInAfterCreate(email: string, password: string): Promise<void> {
+		try {
+			const { user } = await firebase
+				.auth()
+				.signInWithEmailAndPassword(email, password);
+			user.sendEmailVerification();
+		} catch (error) {
+			throw new BadRequest('Failed to send email');
 		}
 	}
 
