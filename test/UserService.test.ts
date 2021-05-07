@@ -1,9 +1,7 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
 import UserService from '@services/UserService';
-import { NotFound, Unauthorized } from '@utils/ErrorHandler';
 import * as admin from 'firebase-admin';
-import firebase from 'firebase';
 
 jest.mock('firebase-admin');
 jest.mock('firebase');

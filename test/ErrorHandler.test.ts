@@ -3,6 +3,7 @@ import handleErrors, {
 	NotFound,
 	BadRequest,
 	Unauthorized,
+	Forbidden,
 } from '@utils/ErrorHandler';
 
 const mockResponse = () => {
@@ -34,6 +35,12 @@ describe('Error handling', () => {
 		const error = new Unauthorized('error');
 		expect(error.message).toBe('error');
 		expect(error.getCode()).toBe(401);
+	});
+
+	test('Return Forbidden', () => {
+		const error = new Forbidden('error');
+		expect(error.message).toBe('error');
+		expect(error.getCode()).toBe(403);
 	});
 });
 

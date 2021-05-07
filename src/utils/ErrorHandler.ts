@@ -17,12 +17,16 @@ export class GeneralError {
 		if (this instanceof Unauthorized) {
 			return 401;
 		}
+		if (this instanceof Forbidden) {
+			return 403;
+		}
 	}
 }
 
 export class BadRequest extends GeneralError {}
 export class NotFound extends GeneralError {}
 export class Unauthorized extends GeneralError {}
+export class Forbidden extends GeneralError {}
 
 const handleErrors = (
 	err: Error | GeneralError,

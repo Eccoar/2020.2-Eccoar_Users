@@ -1,6 +1,11 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
-import { BadRequest, NotFound, Unauthorized } from '@utils/ErrorHandler';
+import {
+	BadRequest,
+	Forbidden,
+	NotFound,
+	Unauthorized,
+} from '@utils/ErrorHandler';
 import { admin, firebase } from '../firebaseDB';
 
 export default class UserService {
@@ -46,10 +51,14 @@ export default class UserService {
 			}
 			return await user.getIdToken(true);
 		} catch (error) {
-			if (error.message == 'User not verified')
+			if (
+				error.message == 'User not verified' ||
+				error.message ==
+					'The password is invalid or the user does not have a password.'
+			)
 				throw new Unauthorized(error.message);
 
-			throw new BadRequest(error);
+			throw new BadRequest(error.message);
 		}
 	}
 
@@ -58,7 +67,7 @@ export default class UserService {
 			const user = await admin.auth().verifyIdToken(jwt);
 			return user.uid;
 		} catch (error) {
-			throw new Unauthorized('Access denied');
+			throw new Forbidden('Access denied');
 		}
 	}
 }
