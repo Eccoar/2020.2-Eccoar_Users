@@ -33,7 +33,7 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as User;
 
 		const set = jest.fn();
@@ -59,7 +59,7 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as UserAuth;
 
 		const createUser = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
@@ -82,7 +82,7 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as UserAuth;
 
 		const createUser = jest.fn().mockImplementation(() => {
@@ -107,7 +107,7 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as User;
 
 		const set = jest.fn().mockImplementation(() => {

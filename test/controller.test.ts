@@ -1,6 +1,5 @@
 import ControllerUser from '@controllers/ControllerUser';
 import UserService from '@services/UserService';
-import { NotFound, Unauthorized } from '@utils/ErrorHandler';
 import { NextFunction, Request, Response } from 'express';
 jest.mock('@services/UserService');
 
@@ -34,7 +33,7 @@ describe('Create User Route', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		};
 		const mResp = mockResponse();
 		jest.spyOn(
@@ -112,8 +111,8 @@ describe('Sign in Route', () => {
 	test('should return jwt and userId', async () => {
 		const controller = new ControllerUser();
 		const mReq = {} as Request;
-		mReq.body = {
-			token: 'JwtTokenMock',
+		mReq.headers = {
+			authorization: 'JwtTokenMock',
 		};
 		const mResp = mockResponse();
 		const mNext = jest.fn();
@@ -132,8 +131,8 @@ describe('Sign in Route', () => {
 		const controller = new ControllerUser();
 
 		const mReq = {} as Request;
-		mReq.body = {
-			token: 'JwtTokenMock',
+		mReq.headers = {
+			authorization: 'JwtTokenMock',
 		};
 		const mResp = mockResponse();
 		const mNext: NextFunction = jest.fn();

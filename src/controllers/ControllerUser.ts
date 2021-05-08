@@ -33,7 +33,7 @@ export default class ControllerUser {
 				'password',
 				'cpf',
 				'cep',
-				'adress',
+				'address',
 			];
 			const missingFields = CheckFields(fields, req.body);
 
@@ -57,7 +57,7 @@ export default class ControllerUser {
 				name: req.body.name,
 				cpf: req.body.cpf,
 				cep: req.body.cep,
-				adress: req.body.adress,
+				address: req.body.address,
 			} as User;
 
 			const resolvePromise = [];
@@ -101,7 +101,9 @@ export default class ControllerUser {
 		next: NextFunction,
 	): Promise<Response> {
 		try {
-			const userId = await this.userService.authorization(req.body.token);
+			const userId = await this.userService.authorization(
+				req.headers.authorization,
+			);
 
 			return res.status(200).json(userId);
 		} catch (error) {

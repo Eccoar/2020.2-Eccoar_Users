@@ -23,7 +23,7 @@ routers.post(
 	},
 );
 
-routers.post(
+routers.get(
 	'/api/authorization',
 	async (req: Request, res: Response, next: NextFunction) => {
 		controller.authorizationHandler(req, res, next);
