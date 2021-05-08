@@ -73,7 +73,7 @@ sonar metrics:
     - apt install wget git -y
     - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
-    - ssh-add $SSH_KEY
+    - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
     - export curr_date=$(date "+%d-%m-%Y")
     - git config --global user.email "pipeline@example.com"
     - git config --global user.name "Pipeline"
