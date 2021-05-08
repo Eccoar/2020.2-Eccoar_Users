@@ -66,17 +66,28 @@ sonar metrics:
   image: debian
   stage: quality metrics
   variables:
+    METRICS_REPO: git@github.com:Eccoar/2020.2-Eccoar-Analytics.git
     METRICS_URL: https://sonarcloud.io/api/measures/component_tree?component=Eccoar_2020.2-Eccoar_Users&metricKeys=files,functions,complexity,comment_lines_density,duplicated_lines_density,security_rating,tests,test_success_density,test_execution_time,reliability_rating,ncloc&ps=500
   before_script:
     - apt update
     - apt install wget git -y
-    - mkdir tmp && cd tmp
+    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - ssh-add $SSH_KEY
+    - export curr_date=$(date "+%d-%m-%Y")
+    - git config --global user.email "pipeline@example.com"
+    - git config --global user.name "Pipeline"
   script:
-    - wget $METRICS_URL -O eccoar-user-$CI_COMMIT_BRANCH-metrics.json
+    - git clone $METRICS_REPO
+    - cd 2020.2-Eccoar-Analytics
+    - cd users
+    - wget $METRICS_URL -O fga-eps-mds-2020_2-Eccoar_Users-$curr_date.json
+    - git add . && git commit -m "Add metric report for $CI_PROJECT_NAME at $curr_date"
+    - git push
   only:
     - main
     - tags
-    - 186_pipeline_user
+    - 203_metrics_repo_ci
   artifacts:
     public: true
     paths:
