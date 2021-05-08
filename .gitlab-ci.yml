@@ -94,7 +94,7 @@ sonar metrics:
   artifacts:
     public: true
     paths:
-      - tmp/*.json
+      - 2020.2-Eccoar-Analytics/**/*.json
 
 ########### Build ###########
 
