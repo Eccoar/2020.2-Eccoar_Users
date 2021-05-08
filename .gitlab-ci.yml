@@ -77,7 +77,7 @@ sonar metrics:
     - mkdir ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - export curr_date=$(date "+%d-%m-%Y")
+    - export curr_date=$(date "+%d-%m-%Y-%Hh%Mm")
     - git config --global user.email "pipeline@example.com"
     - git config --global user.name "Pipeline"
   script:
