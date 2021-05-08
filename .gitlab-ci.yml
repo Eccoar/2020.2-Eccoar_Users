@@ -74,6 +74,7 @@ sonar metrics:
     - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - export curr_date=$(date "+%d-%m-%Y")
