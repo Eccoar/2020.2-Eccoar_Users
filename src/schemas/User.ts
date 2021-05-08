@@ -4,6 +4,5 @@ export interface User {
 	email: string;
 	cpf: string;
 	cep: string;
-	adress: string;
-	userAuthId: string;
+	address: string;
 }

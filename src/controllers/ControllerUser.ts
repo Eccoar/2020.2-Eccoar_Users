@@ -33,7 +33,7 @@ export default class ControllerUser {
 				'password',
 				'cpf',
 				'cep',
-				'adress',
+				'address',
 			];
 			const missingFields = CheckFields(fields, req.body);
 
@@ -52,17 +52,60 @@ export default class ControllerUser {
 			const uuidAuth = await this.userService.createUserAuth(userAuth);
 
 			const user = {
-				userAuthId: uuidAuth,
 				email: req.body.email,
 				lastName: req.body.lastName,
 				name: req.body.name,
 				cpf: req.body.cpf,
 				cep: req.body.cep,
-				adress: req.body.adress,
+				address: req.body.address,
 			} as User;
 
-			await this.userService.createUser(user);
+			const resolvePromise = [];
+
+			const createUser = this.userService.createUser(user, uuidAuth);
+			const sendMail = this.userService.signInAfterCreate(
+				req.body.email,
+				req.body.password,
+			);
+			resolvePromise.push(createUser, sendMail);
+
+			Promise.all(resolvePromise);
+
 			return res.sendStatus(201);
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async signin(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response> {
+		try {
+			const { email, password } = req.body;
+
+			await this.userService.getUserAuthInstanceByEmail(email);
+
+			const jwt = await this.userService.signIn(email, password);
+
+			return res.status(200).json({ token: jwt });
+		} catch (error) {
+			next(error);
+		}
+	}
+
+	async authorizationHandler(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response> {
+		try {
+			const userId = await this.userService.authorization(
+				req.headers.authorization,
+			);
+
+			return res.status(200).json(userId);
 		} catch (error) {
 			next(error);
 		}

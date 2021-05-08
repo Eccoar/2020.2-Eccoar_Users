@@ -1,6 +1,12 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
-import admin from '../firebaseDB';
+import {
+	BadRequest,
+	Forbidden,
+	NotFound,
+	Unauthorized,
+} from '@utils/ErrorHandler';
+import { admin, firebase } from '../firebaseDB';
 
 export default class UserService {
 	async createUserAuth(userAuth: UserAuth): Promise<string> {
@@ -16,12 +22,62 @@ export default class UserService {
 		}
 	}
 
-	async createUser(user: User): Promise<string> {
+	async createUser(user: User, userId: string): Promise<void> {
 		try {
-			const resp = await admin.firestore().collection('users').add(user);
-			return resp.id;
+			await admin.firestore().collection('users').doc(userId).set(user);
 		} catch (error) {
 			throw new Error(error.message);
+		}
+	}
+
+	async getUserAuthInstanceByEmail(email: string): Promise<string> {
+		try {
+			const userRecord = await admin.auth().getUserByEmail(email);
+			return userRecord.uid;
+		} catch (error) {
+			throw new NotFound('User not found');
+		}
+	}
+
+	async signInAfterCreate(email: string, password: string): Promise<void> {
+		try {
+			const { user } = await firebase
+				.auth()
+				.signInWithEmailAndPassword(email, password);
+			user.sendEmailVerification();
+		} catch (error) {
+			throw new BadRequest('Failed to send email');
+		}
+	}
+
+	async signIn(email: string, password: string): Promise<string> {
+		try {
+			const { user } = await firebase
+				.auth()
+				.signInWithEmailAndPassword(email, password);
+			if (!user.emailVerified) {
+				user.sendEmailVerification();
+				throw new Error('User not verified');
+			}
+			return await user.getIdToken(true);
+		} catch (error) {
+			if (
+				error.message == 'User not verified' ||
+				error.message ==
+					'The password is invalid or the user does not have a password.'
+			)
+				throw new Unauthorized(error.message);
+
+			throw new BadRequest(error.message);
+		}
+	}
+
+	async authorization(jwt: string): Promise<string> {
+		try {
+			const user = await admin.auth().verifyIdToken(jwt);
+			return user.uid;
+		} catch (error) {
+			throw new Forbidden('Access denied');
 		}
 	}
 }

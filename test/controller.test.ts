@@ -33,16 +33,14 @@ describe('Create User Route', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		};
 		const mResp = mockResponse();
 		jest.spyOn(
 			UserService.prototype,
 			'createUserAuth',
 		).mockImplementation(() => Promise.resolve('mockUId'));
-		jest.spyOn(UserService.prototype, 'createUser').mockImplementation(() =>
-			Promise.resolve('mockId'),
-		);
+		jest.spyOn(UserService.prototype, 'createUser').mockImplementation();
 		const mNext = jest.fn();
 		await controller.createUser(mReq, mResp, mNext);
 		expect(mResp.sendStatus).toHaveBeenCalledWith(201);
@@ -58,5 +56,95 @@ describe('Create User Route', () => {
 		};
 		await controller.createUser(mReq, mResp, mNext as NextFunction);
 		expect(mResp.status).toBeCalledWith(400);
+	});
+});
+
+describe('Sign in Route', () => {
+	test('should return jwt and userId', async () => {
+		const controller = new ControllerUser();
+		const mReq = {} as Request;
+		mReq.body = {
+			email: 'generic@generic.com',
+			password: 'genPass',
+		};
+		const mResp = mockResponse();
+		const mNext = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'getUserAuthInstanceByEmail',
+		).mockImplementation(() => Promise.resolve('mockUId'));
+
+		jest.spyOn(UserService.prototype, 'signIn').mockImplementation(() =>
+			Promise.resolve('mockJwt'),
+		);
+
+		await controller.signin(mReq, mResp, mNext);
+		expect(mResp.status).toBeCalledWith(200);
+		expect(mResp.json).toHaveBeenCalledWith({
+			token: 'mockJwt',
+		});
+	});
+
+	test('should return Status 404', async () => {
+		const controller = new ControllerUser();
+
+		const mReq = {} as Request;
+		mReq.body = {
+			email: 'generic@generic.com',
+			password: 'genPass',
+		};
+		const mResp = mockResponse();
+		const mNext: NextFunction = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'getUserAuthInstanceByEmail',
+		).mockImplementationOnce(() => Promise.reject(new Error('not found')));
+
+		await controller.signin(mReq, mResp, mNext);
+		expect(mNext).toBeCalledWith(Error('not found'));
+	});
+});
+
+describe('Sign in Route', () => {
+	test('should return jwt and userId', async () => {
+		const controller = new ControllerUser();
+		const mReq = {} as Request;
+		mReq.headers = {
+			authorization: 'JwtTokenMock',
+		};
+		const mResp = mockResponse();
+		const mNext = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'authorization',
+		).mockImplementation(() => Promise.resolve('mockUId'));
+
+		await controller.authorizationHandler(mReq, mResp, mNext);
+		expect(mResp.status).toBeCalledWith(200);
+		expect(mResp.json).toHaveBeenCalledWith('mockUId');
+	});
+
+	test('should return Status 404', async () => {
+		const controller = new ControllerUser();
+
+		const mReq = {} as Request;
+		mReq.headers = {
+			authorization: 'JwtTokenMock',
+		};
+		const mResp = mockResponse();
+		const mNext: NextFunction = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'authorization',
+		).mockImplementationOnce(() =>
+			Promise.reject(new Error('Access Denied')),
+		);
+
+		await controller.authorizationHandler(mReq, mResp, mNext);
+		expect(mNext).toBeCalledWith(Error('Access Denied'));
 	});
 });

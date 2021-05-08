@@ -4,6 +4,7 @@ import UserService from '@services/UserService';
 import * as admin from 'firebase-admin';
 
 jest.mock('firebase-admin');
+jest.mock('firebase');
 
 describe('Test User Service', () => {
 	const mockFirestoreProperty = (admin: any) => {
@@ -28,22 +29,23 @@ describe('Test User Service', () => {
 
 		const user = {
 			email: 'generic@generic.com.br',
-			userAuthId: '123-456-78945-68',
 			lastName: 'generic',
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as User;
 
-		const add = jest.fn().mockReturnValue({ id: 'b1ceeda8' });
-		const collection = jest.fn(() => ({ add }));
+		const set = jest.fn();
+		const doc = jest.fn(() => ({ set }));
+		const collection = jest.fn(() => ({ doc }));
 		jest.spyOn(admin, 'firestore').mockReturnValue(({
 			collection,
 		} as unknown) as any);
 
-		const id = await userService.createUser(user);
-		expect(id).toBe('b1ceeda8');
+		await userService.createUser(user, 'b1ceeda8');
+
+		expect(userService.createUser).toBeTruthy();
 	});
 
 	test('should return a user Id for createUserAuth', async () => {
@@ -57,7 +59,7 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as UserAuth;
 
 		const createUser = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
@@ -80,12 +82,13 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as UserAuth;
 
 		const createUser = jest.fn().mockImplementation(() => {
 			throw new Error();
 		});
+
 		jest.spyOn(admin, 'auth').mockReturnValue(({
 			createUser,
 		} as unknown) as any);
@@ -104,17 +107,82 @@ describe('Test User Service', () => {
 			name: 'Generic',
 			cpf: '88888888888',
 			cep: '47800000',
-			adress: 'generic adress',
+			address: 'generic adress',
 		} as User;
 
-		const add = jest.fn().mockImplementation(() => {
+		const set = jest.fn().mockImplementation(() => {
 			throw new Error();
 		});
-		const collection = jest.fn(() => ({ add }));
+		const doc = jest.fn(() => ({ set }));
+		const collection = jest.fn(() => ({ doc }));
 		jest.spyOn(admin, 'firestore').mockReturnValue(({
 			collection,
 		} as unknown) as any);
 
-		expect(userService.createUser(user)).rejects.toThrow();
+		expect(userService.createUser(user, null)).rejects.toThrow();
+	});
+
+	test('should return User id getting by email', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const getUserByEmail = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			getUserByEmail,
+		} as unknown) as any);
+
+		const id = await userService.getUserAuthInstanceByEmail(
+			'generic@generic.com',
+		);
+		expect(id).toBe('b1ceeda8');
+	});
+
+	test('should return Error getting id by email', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const getUserByEmail = jest.fn().mockImplementation(async () => {
+			throw new Error();
+		});
+
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			getUserByEmail,
+		} as unknown) as any);
+
+		expect(
+			userService
+				.getUserAuthInstanceByEmail('generic@generic.com')
+				.catch(Error),
+		).resolves.toThrow();
+	});
+
+	test('should return userId after authorization', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const verifyIdToken = jest.fn().mockReturnValue({ uid: 'b1ceeda8' });
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			verifyIdToken,
+		} as unknown) as any);
+
+		const id = await userService.authorization('jwt Token');
+		expect(id).toBe('b1ceeda8');
+	});
+
+	test('should return Error after authorization', async () => {
+		mockAuthProperty(admin);
+		const userService = new UserService();
+
+		const verifyIdToken = jest
+			.fn()
+			.mockImplementation(async () => Promise.reject());
+
+		jest.spyOn(admin, 'auth').mockReturnValue(({
+			verifyIdToken,
+		} as unknown) as any);
+
+		expect(
+			userService.authorization('jwt Token').catch(Error),
+		).resolves.toThrow();
 	});
 });
