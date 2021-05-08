@@ -19,12 +19,21 @@ export default class ControllerUser {
 		};
 		resp.status(200).json(pingPong);
 	}
+	
+	async ping(req: Request, resp: Response): Promise<void> {
+		const pingPong = {
+			ping: 'pong',
+		};
+		resp.status(200).json(pingPong);
+	}
 
 	async createUser(
 		req: Request,
 		res: Response,
 		next: NextFunction,
 	): Promise<Response | void> {
+		const name = req.query.name.toString();
+		const surname = req.query.surname.toString();
 		try {
 			const fields = [
 				'email',
