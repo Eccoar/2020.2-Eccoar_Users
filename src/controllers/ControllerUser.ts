@@ -110,4 +110,19 @@ export default class ControllerUser {
 			next(error);
 		}
 	}
+
+	async getUserbyAuthId(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	): Promise<Response> {
+		try {
+			const user = await this.userService.getUserFireStoreByAuthId(
+				req.params.id,
+			);
+			return res.status(200).json(user);
+		} catch (error) {
+			next(error);
+		}
+	}
 }

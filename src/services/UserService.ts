@@ -80,4 +80,22 @@ export default class UserService {
 			throw new Forbidden('Access denied');
 		}
 	}
+
+	async getUserFireStoreByAuthId(
+		id: string,
+	): Promise<FirebaseFirestore.DocumentData> {
+		try {
+			const userRef = await admin
+				.firestore()
+				.collection('users')
+				.doc(id)
+				.get();
+
+			if (userRef.data() == undefined) throw new Error('User not found');
+
+			return userRef.data();
+		} catch (error) {
+			throw new NotFound(error.message);
+		}
+	}
 }

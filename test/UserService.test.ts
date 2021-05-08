@@ -102,7 +102,6 @@ describe('Test User Service', () => {
 
 		const user = {
 			email: 'generic@generic.com.br',
-			userAuthId: '123-456-78945-68',
 			lastName: 'generic',
 			name: 'Generic',
 			cpf: '88888888888',
@@ -184,5 +183,54 @@ describe('Test User Service', () => {
 		expect(
 			userService.authorization('jwt Token').catch(Error),
 		).resolves.toThrow();
+	});
+
+	test('should return a user', async () => {
+		mockFirestoreProperty(admin);
+		const userService = new UserService();
+
+		const mockUser = {
+			lastName: 'sobrenome',
+			email: 'email@gmail.com',
+			name: 'nome',
+			cpf: '99999999999',
+			address: 'generic addres',
+			cep: '99999999',
+		} as FirebaseFirestore.DocumentData;
+
+		const docRes = ({
+			data: () => mockUser,
+		} as unknown) as FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
+
+		const get = jest.fn().mockImplementation(() => docRes);
+		const doc = jest.fn(() => ({ get }));
+		const collection = jest.fn(() => ({ doc }));
+		jest.spyOn(admin, 'firestore').mockReturnValue(({
+			collection,
+		} as unknown) as any);
+
+		const res = await userService.getUserFireStoreByAuthId('mockId');
+		expect(res).toBe(mockUser);
+	});
+
+	test('should return a user', async () => {
+		mockFirestoreProperty(admin);
+		const userService = new UserService();
+		const docRes = ({
+			data: () => {
+				undefined;
+			},
+		} as unknown) as FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
+
+		const get = jest.fn().mockImplementation(() => docRes);
+		const doc = jest.fn(() => ({ get }));
+		const collection = jest.fn(() => ({ doc }));
+		jest.spyOn(admin, 'firestore').mockReturnValue(({
+			collection,
+		} as unknown) as any);
+
+		expect(
+			userService.getUserFireStoreByAuthId('mocId').catch(Error),
+		).rejects.toThrow();
 	});
 });

@@ -30,4 +30,11 @@ routers.get(
 	},
 );
 
+routers.get(
+	'/api/user/:id',
+	async (req: Request, res: Response, next: NextFunction) => {
+		controller.getUserbyAuthId(req, res, next);
+	},
+);
+
 export default routers;

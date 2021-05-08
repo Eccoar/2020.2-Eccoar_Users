@@ -148,3 +148,57 @@ describe('Sign in Route', () => {
 		expect(mNext).toBeCalledWith(Error('Access Denied'));
 	});
 });
+
+describe('Get user route', () => {
+	test('Should return user', async () => {
+		const controller = new ControllerUser();
+
+		const mReq = {} as Request;
+		mReq.params = {
+			id: 'mockId',
+		};
+
+		const mockUser = {
+			lastName: 'sobrenome',
+			email: 'email@gmail.com',
+			name: 'nome',
+			cpf: '99999999999',
+			address: 'generic addres',
+			cep: '99999999',
+		};
+
+		const mResp = mockResponse();
+		const mNext = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'getUserFireStoreByAuthId',
+		).mockImplementation(() => Promise.resolve(mockUser));
+
+		await controller.getUserbyAuthId(mReq, mResp, mNext);
+		expect(mResp.status).toBeCalledWith(200);
+		expect(mResp.json).toBeCalledWith(mockUser);
+	});
+
+	test('Should return 404', async () => {
+		const controller = new ControllerUser();
+
+		const mReq = {} as Request;
+		mReq.params = {
+			id: 'mockId',
+		};
+
+		const mResp = mockResponse();
+		const mNext: NextFunction = jest.fn();
+
+		jest.spyOn(
+			UserService.prototype,
+			'getUserFireStoreByAuthId',
+		).mockImplementationOnce(() =>
+			Promise.reject(new Error('User not found')),
+		);
+
+		await controller.getUserbyAuthId(mReq, mResp, mNext);
+		expect(mNext).toBeCalledWith(Error('User not found'));
+	});
+});
