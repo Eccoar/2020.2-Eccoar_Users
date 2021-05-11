@@ -1,6 +1,7 @@
 import { User } from '@schemas/User';
 import { UserAuth } from '@schemas/UserAuth';
 import UserService from '@services/UserService';
+import { NotFound } from '@utils/ErrorHandler';
 import * as admin from 'firebase-admin';
 
 jest.mock('firebase-admin');
@@ -231,6 +232,6 @@ describe('Test User Service', () => {
 
 		expect(
 			userService.getUserFireStoreByAuthId('mocId').catch(Error),
-		).rejects.toThrow();
+		).resolves.toThrow();
 	});
 });
